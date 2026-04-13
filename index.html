@@ -1,74 +1,146 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <title>Booking System</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f4f4f4;
-      text-align: center;
-      padding: 30px;
-    }
-    .box {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    input, select, button {
-      width: 90%;
-      padding: 10px;
-      margin: 10px;
-    }
-    button {
-      background: green;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NR Production</title>
+
+<style>
+body { margin:0; font-family:Arial; background:#0f0f0f; color:white; }
+
+header {
+  background:url('https://images.unsplash.com/photo-1492724441997-5dc865305da7') center/cover;
+  height:90vh; display:flex; justify-content:center; align-items:center; text-align:center;
+}
+
+.btn { background:#00c853; padding:12px 25px; border:none; color:white; cursor:pointer; }
+
+section { padding:40px; text-align:center; }
+
+.card {
+  background:#1c1c1c; margin:10px; padding:20px;
+  border-radius:10px; display:inline-block; width:260px;
+  cursor:pointer; border:2px solid transparent;
+}
+
+.card.active { border:2px solid #00c853; }
+
+ul { text-align:left; }
+
+input, select { padding:10px; margin:10px; width:80%; }
+</style>
 </head>
+
 <body>
 
-<div class="box">
-  <h2>Booking Servis</h2>
+<header>
+  <div>
+    <h1>NR PRODUCTION</h1>
+    <p>Capture Your Best Moment</p>
+    <button class="btn" onclick="scrollToBooking()">Book Now</button>
+  </div>
+</header>
 
-  <input type="text" id="name" placeholder="Nama">
+<section>
+<h2>Pilih Package</h2>
 
-  <input type="date" id="date">
-
-  <select id="time">
-    <option value="">Pilih Masa</option>
-    <option>10:00 AM</option>
-    <option>12:00 PM</option>
-    <option>2:00 PM</option>
-    <option>4:00 PM</option>
-  </select>
-
-  <button onclick="bookNow()">Book & Pay</button>
+<div class="card" onclick="selectPackage('Nikah',600)">
+<h3>💍 Nikah - RM600</h3>
+<ul>
+<li>Full event cover</li>
+<li>Unlimited shoot</li>
+<li>Soft copies (edited)</li>
+<li>30 min outdoor</li>
+<li>1 photographer</li>
+</ul>
 </div>
 
+<div class="card" onclick="selectPackage('Sanding',800)">
+<h3>📸 Sanding - RM800</h3>
+<ul>
+<li>Full event cover</li>
+<li>Unlimited shoot</li>
+<li>Soft copies (edited)</li>
+<li>1 hour outdoor</li>
+<li>1 photographer</li>
+</ul>
+</div>
+
+<div class="card" onclick="selectPackage('Nikah & Sanding',1300)">
+<h3>💎 Combo - RM1300</h3>
+<ul>
+<li>Full event cover</li>
+<li>Unlimited shoot</li>
+<li>Pendrive</li>
+<li>1 hour outdoor</li>
+</ul>
+</div>
+
+<div class="card" onclick="selectPackage('Event','custom')">
+<h3>🎉 Event</h3>
+<ul>
+<li>RM5/pax</li>
+<li>RM2400 (500pax+)</li>
+<li>2 photographer</li>
+</ul>
+</div>
+
+</section>
+
+<section id="booking">
+<h2>Booking</h2>
+
+<input type="text" id="name" placeholder="Nama"><br>
+<input type="date" id="date"><br>
+
+<select id="time">
+<option value="">Pilih Masa</option>
+<option>10:00 AM</option>
+<option>12:00 PM</option>
+<option>2:00 PM</option>
+<option>4:00 PM</option>
+</select><br>
+
+<button class="btn" onclick="bookNow()">Book & Pay</button>
+</section>
+
 <script>
-function bookNow() {
+let selectedPackage = "";
+let price = "";
+
+function scrollToBooking(){
+  document.getElementById("booking").scrollIntoView({behavior:"smooth"});
+}
+
+function selectPackage(pkg, pr){
+  selectedPackage = pkg;
+  price = pr;
+
+  document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+
+  scrollToBooking();
+}
+
+function bookNow(){
   let name = document.getElementById("name").value;
   let date = document.getElementById("date").value;
   let time = document.getElementById("time").value;
 
-  if (!name || !date || !time) {
-    alert("Sila lengkapkan semua maklumat!");
-    return;
-  }
+  if(!selectedPackage){ alert("Pilih package dulu!"); return; }
+  if(!name || !date || !time){ alert("Lengkapkan semua!"); return; }
 
-  // Simpan sementara (localStorage)
-  localStorage.setItem("booking",
-    JSON.stringify({name, date, time})
-  );
+  let message = `Booking NR Production%0A
+Nama: ${name}%0A
+Package: ${selectedPackage}%0A
+Tarikh: ${date}%0A
+Masa: ${time}`;
 
-  // Redirect ke payment (REPLACE LINK NI)
-  window.location.href = "https://toyyibpay.com/Engkuprod";
+  // WhatsApp
+  window.open(`https://wa.me/60198807839?text=${message}`, "_blank");
+
+  // Payment (sementara guna 1 link)
+  window.location.href = "https://toyyibpay.com/Nikah";
 }
 </script>
 
