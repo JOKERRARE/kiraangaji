@@ -2,147 +2,371 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NR Production</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gaji Celestica</title>
+
+<link rel="manifest" href='data:application/json,{"short_name":"Gaji Celestica","name":"Kira Gaji","icons":[{"src":"https://docs.google.com/uc?export=download&id=1DwXWMuMKD6vxZp7lYWDwYeq1iKrmgtym","sizes":"512x512","type":"image/png","purpose":"any maskable"}],"start_url":"./index.html","background_color":"#00695c","theme_color":"#00695c","display":"standalone","orientation":"portrait"}'>
+
+<meta name="theme-color" content="#00695c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="apple-touch-icon" href="https://docs.google.com/uc?export=download&id=1DwXWMuMKD6vxZp7lYWDwYeq1iKrmgtym">
 
 <style>
-body { margin:0; font-family:Arial; background:#0f0f0f; color:white; }
+  /* --- Gaya Asas dan Tema --- */
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Segoe UI,Arial,sans-serif;
+    padding:20px;
+    background:linear-gradient(to right,#e0f7fa,#f1f8e9);
+    color:#333;
+    transition: background-color 0.5s, color 0.5s;
+    line-height: 1.4;
+  }
+  body.dark{
+    background:linear-gradient(to right,#263238,#37474f);
+    color:#f5f5f5;
+  }
+  h1{
+    text-align:center;
+    color:#00695c;
+    margin:0;
+    flex-grow:1;
+    font-size: 1.6em;
+  }
+  body.dark h1{color:#80cbc4}
+  .container{max-width:1000px;margin:auto} 
+  .card{
+    background:#fff;padding:20px;border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    height: 100%; 
+  }
+  body.dark .card{
+    background:#455a64;
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+  }
+  
+  label{
+    display:block;
+    margin-top: 8px;
+    font-weight:600;
+    font-size: 0.9em;
+  }
+  input[type=number]{
+    width:100%;
+    padding: 8px;
+    margin-top: 4px;
+    border:1px solid #ccc;border-radius:8px;
+    font-size: 14px;
+    background:#fff;color:#333;
+  }
+  body.dark input[type=number]{
+    background:#546e7a;
+    border:1px solid #78909c;
+    color:#fff;
+  }
+  .action-button{ 
+    width:100%;padding:10px;margin-top:16px;border:none;
+    border-radius:8px;font-weight:700;cursor:pointer;
+    transition: background-color 0.3s;
+  }
+  #resetButton {
+      background:#d32f2f; 
+      color: white;
+  }
+  body.dark #resetButton {
+      background:#ff8a80;
+      color: #333;
+  }
+  
+  /* Butang Panduan */
+  .guide-button {
+    background: #0288d1;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85em;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  }
+  body.dark .guide-button { background: #29b6f6; color: #263238; }
 
-header {
-  background:url('https://images.unsplash.com/photo-1492724441997-5dc865305da7') center/cover;
-  height:90vh; display:flex; justify-content:center; align-items:center; text-align:center;
-}
+  /* GAYA KAD HASIL */
+  .result-card {
+    background: #fdfdfd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  body.dark .result-card { background: #546e7a; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+  .result-card h3 { color: #00695c; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 1em; }
+  body.dark .result-card h3 { color: #80cbc4; border-bottom: 1px solid #78909c; }
+  .result-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.9em; }
+  .result-item.total { font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 1em; }
+  .net-pay-section { margin-top: 20px; padding: 10px; display: flex; justify-content: space-between; font-size: 1em; font-weight: bold; background: #00695c; color: white; border-radius: 8px; }
+  body.dark .net-pay-section { background: #80cbc4; color: #263238; }
+  .negative { color: #d32f2f; }
+  body.dark .negative { color: #ff8a80; }
 
-.btn { background:#00c853; padding:12px 25px; border:none; color:white; cursor:pointer; }
+  .header-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .right-controls { display: flex; align-items: center; gap: 12px; }
+  .theme-switch { position: relative; display: inline-block; width: 50px; height: 28px; margin:0; }
+  .theme-switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #f1c40f; transition: .4s; border-radius: 34px; }
+  .slider.round:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+  input:checked + .slider { background-color: #2c3e50; }
+  input:checked + .slider:before { transform: translateX(22px); }
+  .icon { position: absolute; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; transition: all 0.4s ease; }
+  .sun-icon { left: 6px; }
+  .moon-icon { right: 6px; opacity: 0; transform: translateY(-50%) scale(0); }
+  input:checked + .slider .sun-icon { opacity: 0; transform: translateY(-50%) scale(0); }
+  input:checked + .slider .moon-icon { opacity: 1; transform: translateY(-50%) scale(1); }
+  .sun-icon, .moon-icon { fill: white; }
 
-section { padding:40px; text-align:center; }
+  /* GAYA HALAMAN PANDUAN (MODAL pop-up) */
+  .modal {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.6); overflow-y: auto; padding: 20px 10px;
+  }
+  .modal-content {
+    background-color: #fff; margin: auto; padding: 20px; border-radius: 12px; max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s;
+  }
+  body.dark .modal-content { background-color: #37474f; color: #fff; }
+  @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+  .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 1; }
+  .close-modal:hover { color: #333; }
+  body.dark .close-modal:hover { color: #fff; }
+  .guide-section { margin-top: 15px; padding-bottom: 15px; border-bottom: 1px dashed #ccc; }
+  .guide-section:last-child { border-bottom: none; }
+  .guide-section h4 { margin-bottom: 8px; display: flex; align-items: center; gap: 8px; color: #00695c; }
+  body.dark .guide-section h4 { color: #80cbc4; }
+  .guide-section ol { padding-left: 20px; font-size: 0.95em; }
+  .guide-section li { margin-bottom: 6px; }
 
-.card {
-  background:#1c1c1c; margin:10px; padding:20px;
-  border-radius:10px; display:inline-block; width:260px;
-  cursor:pointer; border:2px solid transparent;
-}
-
-.card.active { border:2px solid #00c853; }
-
-ul { text-align:left; }
-
-input, select { padding:10px; margin:10px; width:80%; }
+  @media (min-width: 768px) {
+    .main-layout { display: flex; gap: 20px; align-items: flex-start; }
+    .input-section { flex: 1; }
+    .result-section { flex: 1; margin-top: 0; }
+  }
 </style>
 </head>
-
 <body>
 
-<header>
-  <div>
-    <h1>NR PRODUCTION</h1>
-    <p>Capture Your Best Moment</p>
-    <button class="btn" onclick="scrollToBooking()">Book Now</button>
+<div class="container">
+  <div class="header-container">
+    <h1>GAJI CELESTICA</h1>
+    <div class="right-controls">
+      <button class="guide-button" onclick="openGuide()">Cara Install App</button>
+      <label class="theme-switch">
+        <input type="checkbox" id="theme-toggle-checkbox">
+        <span class="slider round">
+          <svg class="icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </span>
+      </label>
+    </div>
   </div>
-</header>
 
-<section>
-<h2>Pilih Package</h2>
+  <div class="main-layout">
+    <div class="input-section card">
+      <label>Gaji Basic</label>
+      <input id="basic" type="number" placeholder="Contoh: 2000" min="0">
+      <label>Allowance</label><input id="allowance" type="number" min="0">
+      <label>Bonus OIP</label><input id="bonusoip" type="number" min="0">
+      <label>Bonus Tahunan</label><input id="bonusall" type="number" min="0">
+      <label>Hari Bekerja Sebulan</label><input id="workDays" type="number" min="0">
+      <label>Jam Kerja Sehari</label><input id="workHours" type="number" min="0">
+      <label>Bilangan Night Shift</label><input id="nightCount" type="number" min="0">
+      <label>Bilangan Halfday</label><input id="halfdayCount" type="number" min="0">
+      <label>Jam OT 1.5x</label><input id="ot15" type="number" min="0">
+      <label>Jam OT 2.0x</label><input id="ot20" type="number" min="0">
+      <label>Jam OT 3.0x</label><input id="ot30" type="number" min="0">
 
-<div class="card" onclick="selectPackage('Nikah',600)">
-<h3>💍 Nikah - RM600</h3>
-<ul>
-<li>Full event cover</li>
-<li>Unlimited shoot</li>
-<li>Soft copies (edited)</li>
-<li>30 min outdoor</li>
-<li>1 photographer</li>
-</ul>
+      <button id="resetButton" class="action-button" onclick="resetForm()">RESET</button>
+    </div>
+
+    <div class="result-section card">
+      <div id="result"></div>
+    </div>
+  </div>
 </div>
 
-<div class="card" onclick="selectPackage('Sanding',800)">
-<h3>📸 Sanding - RM800</h3>
-<ul>
-<li>Full event cover</li>
-<li>Unlimited shoot</li>
-<li>Soft copies (edited)</li>
-<li>1 hour outdoor</li>
-<li>1 photographer</li>
-</ul>
+<div id="guideModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeGuide()">×</span>
+    <h3 style="margin-bottom: 15px; color: #00695c; border-bottom: 2px solid #00695c; padding-bottom: 5px;">Cara Guna Sebagai App (Add to Home Screen)</h3>
+    
+    <div class="guide-section">
+      <h4>🤖 Untuk Pengguna Android (Google Chrome)</h4>
+      <ol>
+        <li>Buka link website ini menggunakan pelayar <b>Google Chrome</b>.</li>
+        <li>Tekan butang <b>tiga titik bertindih (⋮)</b> di bucu atas sebelah kanan skrin.</li>
+        <li>Cari dan pilih menu <b>"Add to Home screen"</b> (atau <b>"Pasang apl" / "Install app"</b>).</li>
+        <li>Satu ikon app "Gaji Celestica" akan muncul di skrin utama telefon anda dan boleh dibuka pada bila-bila masa walaupun tiada internet!</li>
+      </ol>
+    </div>
+
+    <div class="guide-section">
+      <h4>🍏 Untuk Pengguna iOS / iPhone (Safari)</h4>
+      <ol>
+        <li>Mesti buka link website ini menggunakan pelayar <b>Safari</b> (bukan Chrome/Facebook).</li>
+        <li>Tekan butang <b>"Share"</b> (ikon kotak dengan anak panah ke atas) di bahagian bawah skrin.</li>
+        <li>Skrol ke bawah sedikit dan pilih menu <b>"Add to Home Screen"</b>.</li>
+        <li>Tekan <b>"Add"</b> di bucu atas kanan. App sedia digunakan terus dari skrin utama telefon!</li>
+      </ol>
+    </div>
+    
+    <button class="action-button" style="background:#00695c; color:white; margin-top:20px;" onclick="closeGuide()">Faham, Terima Kasih!</button>
+  </div>
 </div>
-
-<div class="card" onclick="selectPackage('Nikah & Sanding',1300)">
-<h3>💎 Combo - RM1300</h3>
-<ul>
-<li>Full event cover</li>
-<li>Unlimited shoot</li>
-<li>Pendrive</li>
-<li>1 hour outdoor</li>
-</ul>
-</div>
-
-<div class="card" onclick="selectPackage('Event','custom')">
-<h3>🎉 Event</h3>
-<ul>
-<li>RM5/pax</li>
-<li>RM2400 (500pax+)</li>
-<li>2 photographer</li>
-</ul>
-</div>
-
-</section>
-
-<section id="booking">
-<h2>Booking</h2>
-
-<input type="text" id="name" placeholder="Nama"><br>
-<input type="date" id="date"><br>
-
-<select id="time">
-<option value="">Pilih Masa</option>
-<option>10:00 AM</option>
-<option>12:00 PM</option>
-<option>2:00 PM</option>
-<option>4:00 PM</option>
-</select><br>
-
-<button class="btn" onclick="bookNow()">Book & Pay</button>
-</section>
 
 <script>
-let selectedPackage = "";
-let price = "";
+// GENIUS PWA HACK: Menjana Service Worker secara dinamik dari satu fail HTML sahaja
+const swCode = "self.addEventListener('fetch', function(e) { /* Diperlukan untuk syarat PWA A2HS */ });";
+const blob = new Blob([swCode], { type: 'application/javascript' });
+const swUrl = URL.createObjectURL(blob);
 
-function scrollToBooking(){
-  document.getElementById("booking").scrollIntoView({behavior:"smooth"});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register(swUrl, { scope: './' })
+    .then(() => console.log('Single-file Service Worker aktif.'))
+    .catch(err => console.log('Pendaftaran SW gagal:', err));
 }
 
-function selectPackage(pkg, pr){
-  selectedPackage = pkg;
-  price = pr;
-
-  document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
-  event.currentTarget.classList.add("active");
-
-  scrollToBooking();
+// Fungsi Modal Panduan
+function openGuide() { document.getElementById('guideModal').style.display = 'block'; }
+function closeGuide() { document.getElementById('guideModal').style.display = 'none'; }
+window.onclick = function(event) {
+  const modal = document.getElementById('guideModal');
+  if (event.target == modal) { modal.style.display = 'none'; }
 }
 
-function bookNow(){
-  let name = document.getElementById("name").value;
-  let date = document.getElementById("date").value;
-  let time = document.getElementById("time").value;
+// Pengurusan Data Gaji
+const DEFAULT_VALUES = {
+    basic: '', allowance: '', bonusoip: '', bonusall: '',
+    workDays: 26, workHours: 8, nightCount: '', halfdayCount: '',
+    ot15: '', ot20: '', ot30: ''
+};
+const NIGHT_RATE = 9.5;
 
-  if(!selectedPackage){ alert("Pilih package dulu!"); return; }
-  if(!name || !date || !time){ alert("Lengkapkan semua!"); return; }
+function formatCurrency(amount) { return `RM ${amount.toFixed(2)}`; }
 
-  let message = `Booking NR Production%0A
-Nama: ${name}%0A
-Package: ${selectedPackage}%0A
-Tarikh: ${date}%0A
-Masa: ${time}`;
-
-  // WhatsApp
-  window.open(`https://wa.me/60198807839?text=${message}`, "_blank");
-
-  // Payment (sementara guna 1 link)
-  window.location.href = "https://toyyibpay.com/Nikah";
+function saveInputs() {
+    const inputs = document.querySelectorAll('.input-section input[type="number"]');
+    inputs.forEach(input => { localStorage.setItem('gaji_' + input.id, input.value); });
+    localStorage.setItem('gaji_darkMode', document.body.classList.contains('dark'));
 }
+
+function loadInputs() {
+    const inputs = document.querySelectorAll('.input-section input[type="number"]');
+    inputs.forEach(input => {
+        const savedValue = localStorage.getItem('gaji_' + input.id);
+        if (savedValue !== null) { input.value = savedValue; } 
+        else { input.value = DEFAULT_VALUES[input.id] !== undefined ? DEFAULT_VALUES[input.id] : ''; }
+    });
+    const savedTheme = localStorage.getItem('gaji_darkMode');
+    if (savedTheme === 'true') {
+        document.body.classList.add('dark');
+        document.getElementById('theme-toggle-checkbox').checked = true;
+    }
+}
+
+function resetForm() {
+    const inputs = document.querySelectorAll('.input-section input[type="number"]');
+    inputs.forEach(input => { input.value = DEFAULT_VALUES[input.id] !== undefined ? DEFAULT_VALUES[input.id] : ''; });
+    saveInputs(); 
+    kiraGaji();
+}
+
+function kiraGaji() {
+  const basic = parseFloat(document.getElementById('basic').value) || 0;
+  const allowance = parseFloat(document.getElementById('allowance').value) || 0;
+  const bonusoip = parseFloat(document.getElementById('bonusoip').value) || 0;
+  const bonusall = parseFloat(document.getElementById('bonusall').value) || 0;
+  const workDays = parseFloat(document.getElementById('workDays').value) || 0;
+  const workHours = parseFloat(document.getElementById('workHours').value) || 0;
+  const nightCount = parseFloat(document.getElementById('nightCount').value) || 0;
+  const halfdayCount = parseFloat(document.getElementById('halfdayCount').value) || 0;
+  const ot15 = parseFloat(document.getElementById('ot15').value) || 0;
+  const ot20 = parseFloat(document.getElementById('ot20').value) || 0;
+  const ot30 = parseFloat(document.getElementById('ot30').value) || 0;
+
+  const nightTotal = nightCount * NIGHT_RATE;
+  const gajiAsasBulanan = basic + allowance + bonusoip + nightTotal; 
+  const dailyRate = (gajiAsasBulanan / (workDays > 0 ? workDays : 1)) || 0; 
+  const hourlyRate = (dailyRate / (workHours > 0 ? workHours : 1)) || 0; 
+  const halfdayPotong = halfdayCount * (dailyRate / 2);
+  const otAmount15 = ot15 * hourlyRate * 1.5;
+  const otAmount20 = ot20 * hourlyRate * 2.0;
+  const otAmount30 = ot30 * hourlyRate * 3.0;
+  const totalOT = otAmount15 + otAmount20 + otAmount30;
+  const pendapatanKasar = basic + allowance + bonusoip + bonusall + nightTotal + totalOT;
+
+  const epf = gajiAsasBulanan * 0.11;
+  const socsoGajiSiling = pendapatanKasar > 6000 ? 6000 : pendapatanKasar;
+  const socso = socsoGajiSiling * 0.005;
+  const eisGajiSiling = pendapatanKasar > 6000 ? 6000 : pendapatanKasar;
+  const eis = eisGajiSiling * 0.002;
+  
+  const jumlahPotongan = epf + socso + eis + halfdayPotong;
+  const gajiBersih = pendapatanKasar - jumlahPotongan;
+
+  document.getElementById('result').innerHTML = `
+    <div class="result-card">
+        <h3>Pendapatan</h3>
+        <div class="result-item"><span>Gaji Basic</span><span>${formatCurrency(basic)}</span></div>
+        <div class="result-item"><span>Elaun + OIP</span><span>${formatCurrency(allowance + bonusoip)}</span></div>
+        <div class="result-item"><span>Gaji Hari </span><span>${formatCurrency(dailyRate)}</span></div>
+        <div class="result-item"><span>Gaji Jam </span><span>${formatCurrency(hourlyRate)}</span></div>
+        <div class="result-item"><span>Bonus Tahunan</span><span>${formatCurrency(bonusall)}</span></div>
+        <div class="result-item"><span>Pendapatan Night Shift (${nightCount} × RM${NIGHT_RATE.toFixed(2)})</span><span>${formatCurrency(nightTotal)}</span></div>
+        <div class="result-item"><span>OT 1.5x (${ot15} jam)</span><span>${formatCurrency(otAmount15)}</span></div>
+        <div class="result-item"><span>OT 2.0x (${ot20} jam)</span><span>${formatCurrency(otAmount20)}</span></div>
+        <div class="result-item"><span>OT 3.0x (${ot30} jam)</span><span>${formatCurrency(otAmount30)}</span></div>
+        <div class="result-item total"><span>GAJI KASAR</span><span>${formatCurrency(pendapatanKasar)}</span></div>
+    </div>
+
+    <div class="result-card">
+        <h3>Potongan</h3>
+        <div class="result-item"><span>Potongan Halfday (${halfdayCount} hari)</span><span class="negative">- ${formatCurrency(halfdayPotong).replace('RM ', '')}</span></div>
+        <div class="result-item"><span>EPF (11%)</span><span class="negative">- ${formatCurrency(epf).replace('RM ', '')}</span></div>
+        <div class="result-item"><span>SOCSO</span><span class="negative">- ${formatCurrency(socso).replace('RM ', '')}</span></div>
+        <div class="result-item"><span>EIS</span><span class="negative">- ${formatCurrency(eis).replace('RM ', '')}</span></div>
+        <div class="result-item total"><span>JUMLAH POTONGAN</span><span>${formatCurrency(jumlahPotongan)}</span></div>
+    </div>
+    
+    <div class="net-pay-section">
+        <span>GAJI BERSIH</span>
+        <span>${formatCurrency(gajiBersih)}</span>
+    </div>`;
+}
+
+const themeToggleCheckbox = document.getElementById('theme-toggle-checkbox');
+themeToggleCheckbox.addEventListener('change', function() {
+  document.body.classList.toggle('dark', this.checked);
+  saveInputs();
+});
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    loadInputs(); 
+    kiraGaji(); 
+
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            kiraGaji();
+            saveInputs(); 
+        });
+    });
+});
 </script>
-
 </body>
 </html>
