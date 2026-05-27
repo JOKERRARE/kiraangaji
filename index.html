@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Kira Gaji</title>
+<title>KIRA GAJI</title>
 
 <link rel="manifest" href='data:application/json,{"short_name":"Kira Gaji","name":"Kira Gaji","icons":[{"src":"https://docs.google.com/uc?export=download&id=10hcNQ4-abgbSv0n7YtkXjB5-84plSOSP","sizes":"512x512","type":"image/png","purpose":"any maskable"}],"start_url":"./index.html","background_color":"#00695c","theme_color":"#00695c","display":"standalone","orientation":"portrait"}'>
 
@@ -28,14 +28,28 @@
     background:linear-gradient(to right,#263238,#37474f);
     color:#f5f5f5;
   }
+  
+  /* --- SUSUNAN LOGO & TAJUK (DIUBAH SUAI) --- */
+  .title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Jarak antara gambar dan teks */
+  }
+  .header-logo {
+    width: 45px; /* Saiz lebar gambar */
+    height: 45px; /* Saiz tinggi gambar */
+    border-radius: 50%; /* Membuatkan gambar berbentuk bulat */
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  }
   h1{
-    text-align:center;
+    text-align: left; /* Ditukar ke kiri supaya selari dengan logo */
     color:#00695c;
     margin:0;
-    flex-grow:1;
     font-size: 1.6em;
   }
   body.dark h1{color:#80cbc4}
+  
   .container{max-width:1000px;margin:auto} 
   .card{
     background:#fff;padding:20px;border-radius:10px;
@@ -161,7 +175,9 @@
   <div class="header-container">
     <div class="title-wrapper">
       <img class="header-logo" src="https://docs.google.com/uc?export=download&id=10hcNQ4-abgbSv0n7YtkXjB5-84plSOSP" alt="Logo">
-    <h1>KIRA GAJI</h1>
+      <h1>KIRA GAJI</h1>
+    </div>
+    
     <div class="right-controls">
       <button class="guide-button" onclick="openGuide()">Cara Install App</button>
       <label class="theme-switch">
@@ -232,8 +248,7 @@
 </div>
 
 <script>
-// GENIUS PWA HACK: Menjana Service Worker secara dinamik dari satu fail HTML sahaja
-const swCode = "self.addEventListener('fetch', function(e) { /* Diperlukan untuk syarat PWA A2HS */ });";
+const swCode = "self.addEventListener('fetch', function(e) { });";
 const blob = new Blob([swCode], { type: 'application/javascript' });
 const swUrl = URL.createObjectURL(blob);
 
@@ -243,7 +258,6 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.log('Pendaftaran SW gagal:', err));
 }
 
-// Fungsi Modal Panduan
 function openGuide() { document.getElementById('guideModal').style.display = 'block'; }
 function closeGuide() { document.getElementById('guideModal').style.display = 'none'; }
 window.onclick = function(event) {
@@ -251,7 +265,6 @@ window.onclick = function(event) {
   if (event.target == modal) { modal.style.display = 'none'; }
 }
 
-// Pengurusan Data Gaji
 const DEFAULT_VALUES = {
     basic: '', allowance: '', bonusoip: '', bonusall: '',
     workDays: 26, workHours: 8, nightCount: '', halfdayCount: '',
